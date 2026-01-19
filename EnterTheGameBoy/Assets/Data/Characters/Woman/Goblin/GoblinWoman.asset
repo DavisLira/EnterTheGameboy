@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: GoblinWoman
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: goblin_woman
+  prefab: {fileID: 8572066508836614395, guid: bc70158ec826d48528a9271206f344ea, type: 3}
+  icon: {fileID: 343818334, guid: 141813550abe44760b4b8a483a4959f2, type: 3}

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: PunkMan
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: punk_man
+  prefab: {fileID: 8572066508836614395, guid: a8f593e09a6584dc3a5724d660a72b9f, type: 3}
+  icon: {fileID: -8045957287046189742, guid: 3e4a63f3fdbbf43d5af1e55cc4d0cd99, type: 3}

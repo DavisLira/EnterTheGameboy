@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: BlondeMan
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: blonde_man
+  prefab: {fileID: 8572066508836614395, guid: ac6bdf31f198f4484930fc16adbcf758, type: 3}
+  icon: {fileID: -203427052, guid: 49b82f4d46bf34569bda54e1d8133c76, type: 3}

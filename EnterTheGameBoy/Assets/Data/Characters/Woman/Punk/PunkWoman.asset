@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: PunkWoman
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: punk_woman
+  prefab: {fileID: 5010003896938829916, guid: 2befb5fa8ad264710b1a68c78e599097, type: 3}
+  icon: {fileID: -344839100538025228, guid: 1530046a4527b4957bf21a80293274eb, type: 3}

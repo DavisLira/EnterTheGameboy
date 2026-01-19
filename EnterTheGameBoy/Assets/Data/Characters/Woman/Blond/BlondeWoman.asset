@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: BlondeWoman
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: blonde_woman
+  prefab: {fileID: 8572066508836614395, guid: b4c0d24ed765740e980a8d292337fad4, type: 3}
+  icon: {fileID: 2128774851, guid: 1708026a8e6714759af22e3f17421dff, type: 3}

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e49847d33be74b99af592e110382465, type: 3}
+  m_Name: GoblinMan
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  characterId: goblin_man
+  prefab: {fileID: 8572066508836614395, guid: cda3787186a9b4783a2a04f9fa69df7d, type: 3}
+  icon: {fileID: 982511809, guid: 9e19269901e71412087a99a2b36611dc, type: 3}
