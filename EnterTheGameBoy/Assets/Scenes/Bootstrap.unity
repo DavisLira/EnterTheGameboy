@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Transports::kcp2k.KcpTransport
-  port: 7777
+  port: 5173
   DualMode: 1
   NoDelay: 1
   Interval: 10
@@ -351,7 +351,7 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 8232560408060679752, guid: 0667019c3d8144134ab20ee173140655, type: 3}
   RoomScene: Assets/Scenes/CharacterSelect.unity
-  GameplayScene: Assets/Scenes/Game.unity
+  GameplayScene: Assets/Scenes/Test.unity
   _allPlayersReady: 0
   clientIndex: 0
   characterDatabase: {fileID: 11400000, guid: 31afb378b1c96405285aea5ec4ef1ab7, type: 2}
