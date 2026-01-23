@@ -1,24 +1,20 @@
 using UnityEngine;
-using Mirror; // Importante
-using TMPro;  // Se estiver usando TextMeshPro para o InputField
+using Mirror;
+using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject mainPanel;       // Arraste o objeto "MainPanel" aqui
-    public GameObject connectionPanel; // Arraste o objeto "ConnectionPanel" aqui
+    public GameObject mainPanel;
+    public GameObject connectionPanel;
 
     [Header("Inputs")]
-    public TMP_InputField codeInput;   // Arraste seu Input Field aqui (se for TMP)
-    // public InputField codeInput;    // Use esta linha se for o Input Field antigo do Unity
+    public TMP_InputField codeInput;
 
     void Start()
     {
-        // Garante que começa no menu certo
         ShowMainPanel();
     }
-
-    // --- Navegação de UI ---
 
     public void ShowMainPanel()
     {
@@ -26,51 +22,60 @@ public class MainMenuController : MonoBehaviour
         connectionPanel.SetActive(false);
     }
 
-    public void OnPlay() // O botão "Jogar" chama isso
+    public void OnPlay()
     {
         mainPanel.SetActive(false);
         connectionPanel.SetActive(true);
     }
 
-    public void OnBack() // O botão "Voltar" do painel de conexão chama isso
+    public void OnBack()
     {
         ShowMainPanel();
     }
 
-    // --- Lógica do Mirror ---
+    // --- LÓGICA HÍBRIDA (AQUI ESTÁ A MÁGICA) ---
 
-    public void OnCreateRoom() // Botão "Criar Sala"
+    public void OnCreateRoom()
     {
-        // Inicia o Host. Como configuramos a "Room Scene" no NetworkManager,
-        // ele vai carregar a CharacterSelect automaticamente.
-        NetworkManager.singleton.StartHost();
-    }
-
-    public void OnJoinRoom() // Botão "Entrar"
-    {
-        string address = "localhost"; 
-        
-        // Futuramente, aqui vamos converter o CÓDIGO para IP ou usar o Relay.
-        // Por enquanto, se o input estiver vazio, entra localmente.
-        if (codeInput != null && !string.IsNullOrEmpty(codeInput.text))
+        // CASO 1: Estamos rodando via STEAM (Bootstrap Steam carregou o SteamLobby)
+        if (SteamLobby.Instance != null)
         {
-            address = codeInput.text; 
+            Debug.Log("Criando sala via STEAM...");
+            SteamLobby.Instance.HostLobby();
         }
-
-        NetworkManager.singleton.networkAddress = address;
-        NetworkManager.singleton.StartClient();
+        // CASO 2: Estamos rodando LOCAL (SteamLobby é null)
+        else
+        {
+            Debug.Log("Criando sala via LOCAL (LAN/ParrelSync)...");
+            NetworkManager.singleton.StartHost();
+        }
     }
 
-    // --- Outros Botões ---
-
-    public void OnUpgrades()
+    public void OnJoinRoom()
     {
-        Debug.Log("Upgrades (em breve)");
-    }
-
-    public void OnSettings()
-    {
-        Debug.Log("Configurações (em breve)");
+        // CASO 1: STEAM
+        // Na Steam, geralmente entramos via convite, mas se você implementou input de ID:
+        if (SteamLobby.Instance != null)
+        {
+            // Lógica para entrar via ID da Steam (se necessário)
+            string code = codeInput.text;
+            if (!string.IsNullOrEmpty(code) && ulong.TryParse(code, out ulong steamId))
+            {
+                Steamworks.SteamMatchmaking.JoinLobby(new Steamworks.CSteamID(steamId));
+            }
+        }
+        // CASO 2: LOCAL (IP / Localhost)
+        else
+        {
+            string address = "localhost";
+            if (!string.IsNullOrEmpty(codeInput.text))
+            {
+                address = codeInput.text;
+            }
+            
+            NetworkManager.singleton.networkAddress = address;
+            NetworkManager.singleton.StartClient();
+        }
     }
 
     public void OnExit()

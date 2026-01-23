@@ -1,7 +1,8 @@
 using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
-using TMPro; // Se estiver usando TextMeshPro
+using TMPro; // Necessário para TextMeshPro
+using Steamworks; // <--- ADICIONE ISSO (Necessário para Steamworks.CSteamID)
 
 public class CharacterSelectController : MonoBehaviour
 {
@@ -12,20 +13,36 @@ public class CharacterSelectController : MonoBehaviour
     public Transform content;
     public GameObject characterButtonPrefab;
     public Button confirmButton; 
-    public TextMeshProUGUI confirmButtonText; 
+    public TextMeshProUGUI confirmButtonText;
+    public TextMeshProUGUI roomCodeText;
 
     private NetworkRoomPlayerExt localRoomPlayer;
 
     void Start()
     {
+        // Verifica se o SteamLobby existe e se tem um ID válido
+        if (SteamLobby.Instance != null && SteamLobby.CurrentLobbyID != CSteamID.Nil)
+        {
+             // MODO STEAM
+             // Verifica se roomCodeText foi arrastado no inspector para evitar erro null
+             if(roomCodeText != null) 
+                 roomCodeText.text = "ID STEAM: " + SteamLobby.CurrentLobbyID.ToString();
+        }
+        else
+        {
+             // MODO LOCAL
+             if(roomCodeText != null) 
+                 roomCodeText.text = "MODO LOCAL (LAN)";
+        }
+        
         GenerateButtons();
         if(confirmButton) confirmButton.interactable = false;
     }
 
     void GenerateButtons()
     {
-        // (Seu código de gerar botões continua igual...)
         foreach (Transform child in content) Destroy(child.gameObject);
+        
         for (int i = 0; i < database.characters.Length; i++)
         {
             GameObject buttonObj = Instantiate(characterButtonPrefab, content);
@@ -36,21 +53,19 @@ public class CharacterSelectController : MonoBehaviour
 
     void Update()
     {
-        // Procura o jogador local constantemente até achar
         if (localRoomPlayer == null)
         {
             var roomPlayers = FindObjectsByType<NetworkRoomPlayerExt>(FindObjectsSortMode.None);
             foreach (var player in roomPlayers)
             {
-                if (player.isLocalPlayer) // É o MEU jogador?
+                // isLocalPlayer é mais seguro que hasAuthority nesse contexto, mas ambos funcionam
+                if (player.isLocalPlayer) 
                 {
                     localRoomPlayer = player;
                     Debug.Log("PLAYER LOCAL ENCONTRADO! Habilitando botões.");
                     
-                    // Libera o botão confirmar assim que achar o player
                     if(confirmButton) confirmButton.interactable = true;
                     
-                    // Atualiza o texto do botão caso ele já tenha voltado de um jogo
                     UpdateConfirmButtonText(); 
                     break;
                 }
@@ -78,21 +93,14 @@ public class CharacterSelectController : MonoBehaviour
     {
         if (localRoomPlayer == null) return;
 
-        // Inverte o estado de Ready
         bool newReadyState = !localRoomPlayer.readyToBegin;
         localRoomPlayer.CmdChangeReadyState(newReadyState);
         
-        // Atualiza texto visualmente (o Mirror vai confirmar depois)
         if(confirmButtonText) confirmButtonText.text = newReadyState ? "Aguardando..." : "Confirmar";
     }
 
-    // --- A CORREÇÃO DO ERRO ESTÁ AQUI ---
     public void Back()
     {
-        // NÃO use SceneManager.LoadScene("MainMenu");
-        
-        // Verifica se é Host ou Cliente e desliga corretamente.
-        // O NetworkManager vai carregar a 'Offline Scene' (MainMenu) automaticamente.
         if (NetworkServer.active && NetworkClient.isConnected)
         {
             NetworkManager.singleton.StopHost();
