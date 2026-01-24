@@ -7,6 +7,7 @@ public class MainMenuController : MonoBehaviour
     [Header("UI Panels")]
     public GameObject mainPanel;
     public GameObject connectionPanel;
+    public GameObject loadingPanel;
 
     [Header("Inputs")]
     public TMP_InputField codeInput;
@@ -37,16 +38,18 @@ public class MainMenuController : MonoBehaviour
 
     public void OnCreateRoom()
     {
-        // CASO 1: Estamos rodando via STEAM (Bootstrap Steam carregou o SteamLobby)
+        // 1. Ativa o loading imediatamente para o usuário saber que clicou
+        if(loadingPanel) loadingPanel.SetActive(true); 
+        mainPanel.SetActive(false); // Esconde os botões para ele não clicar 2x
+
         if (SteamLobby.Instance != null)
         {
             Debug.Log("Criando sala via STEAM...");
             SteamLobby.Instance.HostLobby();
         }
-        // CASO 2: Estamos rodando LOCAL (SteamLobby é null)
         else
         {
-            Debug.Log("Criando sala via LOCAL (LAN/ParrelSync)...");
+            Debug.Log("Criando sala via LOCAL...");
             NetworkManager.singleton.StartHost();
         }
     }

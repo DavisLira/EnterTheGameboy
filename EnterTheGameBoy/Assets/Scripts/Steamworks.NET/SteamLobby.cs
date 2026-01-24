@@ -52,6 +52,13 @@ public class SteamLobby : MonoBehaviour
             return;
         }
 
+        // --- PROTEÇÃO ---
+        if (NetworkManager.singleton == null)
+        {
+            Debug.LogError("FATAL: Tentamos criar a sala, mas o NetworkManager sumiu!");
+            return;
+        }
+
         Debug.Log("Lobby criado na Steam! Iniciando Host...");
         
         NetworkManager.singleton.StartHost();

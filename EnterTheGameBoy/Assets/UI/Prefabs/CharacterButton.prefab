@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterButtonUI
   icon: {fileID: 1018556908687071493}
+  backgroundImage: {fileID: 6558984661690348267}
 --- !u!1 &3744914795312337522
 GameObject:
   m_ObjectHideFlags: 0

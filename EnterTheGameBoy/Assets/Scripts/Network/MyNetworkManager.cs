@@ -7,7 +7,26 @@ public class MyNetworkManager : NetworkRoomManager
     [Header("Referencias do Jogo")]
     public CharacterDatabase characterDatabase;
 
-    // --- 1. Força a mudança de cena ao iniciar o Host ---
+    // --- IMPEDE O INÍCIO AUTOMÁTICO ---
+    public override void OnRoomServerPlayersReady()
+    {
+        // Deixamos vazio intencionalmente.
+        // Assim, quando todos derem "Ready", o jogo NÃO muda de cena sozinho.
+        // Ficamos esperando o Host clicar no botão.
+        Debug.Log("Todos prontos! Aguardando Host iniciar...");
+    }
+
+    // --- FUNÇÃO MANUAL DO HOST ---
+    public void HostStartGame()
+    {
+        // Verifica se realmente todos estão prontos (segurança extra)
+        if (allPlayersReady)
+        {
+            ServerChangeScene(GameplayScene);
+        }
+    }
+
+    // --- SEUS CÓDIGOS ANTERIORES MANTIDOS ---
     public override void OnStartHost()
     {
         base.OnStartHost();
@@ -17,73 +36,45 @@ public class MyNetworkManager : NetworkRoomManager
         }
     }
 
-    // --- 2. Permite conectar (Anti-Kick) ---
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
         string currentScene = SceneManager.GetActiveScene().path;
         
-        // Debug para garantir que estamos vendo o que o Mirror vê
-        Debug.Log($"[DEBUG CONEXÃO] Cliente {conn.connectionId} conectando. Cena Atual: '{currentScene}' | RoomScene Configurada: '{RoomScene}'");
-
-        // CASO 1: O Servidor já está na Sala (Situação normal de alguém entrando)
         if (currentScene == RoomScene)
         {
-            Debug.Log("[DEBUG] Servidor já está na sala. Aceitando cliente manualmente.");
-            
-            // AQUI ESTÁ A MÁGICA: Chamamos o evento da sala direto e pulamos a verificação chata do base
             OnRoomServerConnect(conn); 
             return; 
         }
 
-        // CASO 2: O Servidor ainda está no Menu/Carregando (Situação do Host criando)
         if (currentScene != RoomScene)
         {
-            if (conn.connectionId == 0) // É o Host
+            if (conn.connectionId == 0)
             {
-                Debug.Log("[DEBUG] Host conectando durante carregamento. Permitindo...");
                 OnRoomServerConnect(conn);
                 return; 
             }
         }
-
-        // Se não for nenhum dos casos acima, deixa o Mirror decidir (provavelmente vai desconectar se estiver no jogo)
         base.OnServerConnect(conn);
     }
 
-    // --- 3. Filtra tentativas de Spawn na hora errada ---
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
         string currentScene = SceneManager.GetActiveScene().path;
-
-        // Só permite criar o boneco se estivermos na cena da Sala ou do Jogo
         if (currentScene == RoomScene || currentScene == GameplayScene)
         {
             base.OnServerAddPlayer(conn);
         }
-        else
-        {
-            Debug.Log($"[DEBUG] Segurando spawn do player até a cena carregar...");
-        }
     }
 
-    // --- 4. O GATILHO: Cria o Player quando a cena carrega ---
     public override void OnRoomClientSceneChanged()
     {
         base.OnRoomClientSceneChanged();
-
-        // Verificamos se estamos conectados e sem player
         if (NetworkClient.active && NetworkClient.localPlayer == null)
         {
-            Debug.Log("[DEBUG] Cena carregada! Solicitando criação MANUAL do Player.");
-            
-            // REMOVEMOS O NetworkClient.Ready();
-            // O Mirror já cuidou disso. Só pedimos para criar o boneco:
-            
             NetworkClient.AddPlayer(); 
         }
     }
 
-    // --- 5. Transforma RoomPlayer em GamePlayer ---
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
         NetworkRoomPlayerExt lobbyPlayer = roomPlayer.GetComponent<NetworkRoomPlayerExt>();
