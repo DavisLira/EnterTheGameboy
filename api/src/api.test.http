@@ -1,0 +1,90 @@
+@baseUrl = http://localhost:4000
+@playerId = player_60236211
+@hostId = player_6a650d42
+@roomCode = CA45
+@sessionId = session_abc_001
+
+### Criar Player
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "username": "paulo",
+  "password": "123456"
+}
+
+### Listar Players
+GET {{baseUrl}}/players
+
+### Buscar Player por ID
+GET {{baseUrl}}/players/{{playerId}}
+
+### Criar Sala
+POST {{baseUrl}}/rooms
+Content-Type: application/json
+
+{
+  "hostId": "{{hostId}}"
+}
+
+### Listar Salas
+GET {{baseUrl}}/rooms
+
+### Buscar Sala por Código
+GET {{baseUrl}}/rooms/{{roomCode}}
+
+### Adicionar Player na Sala
+PATCH {{baseUrl}}/rooms/{{roomCode}}
+Content-Type: application/json
+
+{
+  "playerId": "{{playerId}}"
+}
+
+### Iniciar Partida (Host)
+POST {{baseUrl}}/rooms/{{roomCode}}/start
+Content-Type: application/json
+
+{
+  "total_stages": 6,
+  "players": [
+    {
+      "player_id": "player_6a650d42",
+      "username": "davi",
+      "skin_id": "knight_red"
+    },
+    {
+      "player_id": "player_60236211",
+      "username": "gabriel",
+      "skin_id": "mage_blue"
+    }
+  ]
+}
+
+### Enviar Snapshot (Mirror Host - durante partida)
+POST {{baseUrl}}/matches/runtime/snapshot
+Content-Type: application/json
+
+{
+  "session_id": "{{sessionId}}",
+  "snapshot": {
+    "current_stage": 3,
+    "players": {
+      "p1": { "hp": 40, "damage_dealt": 300, "mobs_killed": 15 },
+      "p2": { "hp": 25, "damage_dealt": 260, "mobs_killed": 12 }
+    },
+    "total_damage": 560
+  }
+}
+
+### Recuperar Estado da Partida (Host Recovery)
+GET {{baseUrl}}/matches/runtime/{{sessionId}}
+
+### Finalizar Partida
+POST {{baseUrl}}/matches/end
+Content-Type: application/json
+
+{
+  "session_id": "{{sessionId}}",
+  "result": "victory"
+}

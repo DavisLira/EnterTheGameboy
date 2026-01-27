@@ -62,4 +62,28 @@ public class PlayerMovement : NetworkBehaviour
 
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
+
+    // Função chamada pelo Servidor (DungeonRoom)
+    [Server]
+    public void ForceTeleport(Vector3 position)
+    {
+        // 1. Move no servidor (para validar)
+        transform.position = position;
+        
+        // 2. Manda o dono do boneco mover também (para evitar glitch visual)
+        TargetTeleport(position);
+    }
+
+    [TargetRpc] // Roda APENAS no cliente dono deste boneco
+    void TargetTeleport(Vector3 position)
+    {
+        transform.position = position;
+        
+        // Se tiver Rigidbody, zera a velocidade para não sair voando
+        if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
+        {
+            rb.linearVelocity = Vector2.zero; // Unity 6 (use .velocity em versões antigas)
+            rb.angularVelocity = 0f;
+        }
+    }
 }

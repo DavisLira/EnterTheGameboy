@@ -30,6 +30,7 @@ public class CharacterButtonUI : MonoBehaviour
     public void OnClick()
     {
         controller.OnSelectCharacter(characterIndex);
+        controller.HasSelectedCharacter = true;
     }
 
     // --- NOVA FUNÇÃO PARA MUDAR A COR ---

@@ -25,6 +25,8 @@ public class CharacterSelectController : MonoBehaviour
     private List<CharacterButtonUI> spawnedButtons = new List<CharacterButtonUI>();
     private NetworkRoomPlayerExt localRoomPlayer;
 
+    public bool HasSelectedCharacter = false;
+
     void Start()
     {
         // Configuração do Texto Steam/Local
@@ -86,13 +88,13 @@ public class CharacterSelectController : MonoBehaviour
             // Percorre todos os botões e pinta apenas o que corresponde ao index escolhido
             for (int i = 0; i < spawnedButtons.Count; i++)
             {
-                bool isSelected = (localRoomPlayer.characterIndex == i);
+                bool isSelected = localRoomPlayer.characterIndex == i;
+                if (!HasSelectedCharacter) isSelected = false; // Se não escolheu, nenhum fica verde
                 spawnedButtons[i].SetSelectedState(isSelected);
             }
 
             // --- 2. LÓGICA DO BOTÃO CONFIRMAR ---
-            bool temPersonagem = localRoomPlayer.characterIndex != -1;
-            if(confirmButton) confirmButton.interactable = temPersonagem;
+            if(confirmButton) confirmButton.interactable = HasSelectedCharacter;
 
             // --- 3. LÓGICA DO HOST (Botão Iniciar + Contador) ---
             if (NetworkServer.active && localRoomPlayer.index == 0)
@@ -152,7 +154,7 @@ public class CharacterSelectController : MonoBehaviour
 
     public void Confirm()
     {
-        if (localRoomPlayer == null) return;
+        if (localRoomPlayer == null || !HasSelectedCharacter) return;
 
         bool newState = !localRoomPlayer.readyToBegin;
         localRoomPlayer.CmdChangeReadyState(newState);

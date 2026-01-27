@@ -1,11 +1,20 @@
 using UnityEngine;
+using Mirror;
 
-public class SkeletonAI : MonoBehaviour
+public class SkeletonAI : NetworkBehaviour
 {
-    public float chaseSpeed = 2f;
-    public float wanderSpeed = 0.5f;
-    public float chaseDistance = 10f;
+    [Header("Estado Inicial")]
+    [SyncVar]
+    public bool isAsleep = true;
 
+    [Header("Combate")]
+    public int damage = 1;
+    public float timeBetweenAttacks = 1.0f;
+    public float chaseDistance = 10f;
+    public float chaseSpeed = 2f;
+
+    [Header("Wander")]
+    public float wanderSpeed = 0.5f;
     public float wanderTime = 1.5f;
     public float wanderWaitTime = 2f;
 
@@ -14,10 +23,17 @@ public class SkeletonAI : MonoBehaviour
     SpriteRenderer sr;
     Transform player;
 
+    // Controle de Dano
+    float nextAttackTime = 0f;
+
+    // Wander
     Vector2 wanderDirection;
     float wanderTimer;
     float waitTimer;
     bool isWandering;
+
+    // Otimização
+    float searchTimer = 0f;
 
     void Awake()
     {
@@ -26,10 +42,30 @@ public class SkeletonAI : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
+    [Server]
+    public void WakeUp()
+    {
+        isAsleep = false;
+        Debug.Log($"{gameObject.name} (Skeleton) acordou!");
+    }
+
+    [ServerCallback]
     void FixedUpdate()
     {
+        if (isAsleep)
+        {
+            rb.linearVelocity = Vector2.zero;
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
         TryFindPlayer();
-        if (!player) return;
+
+        if (!player)
+        {
+            Wander();
+            return;
+        }
 
         float distance = Vector2.Distance(transform.position, player.position);
 
@@ -39,13 +75,54 @@ public class SkeletonAI : MonoBehaviour
             Wander();
     }
 
+    // --- SISTEMA DE DANO PADRONIZADO ---
+    [ServerCallback]
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (isAsleep) return;
+        if (Time.time < nextAttackTime) return;
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+                nextAttackTime = Time.time + timeBetweenAttacks;
+
+                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+                if (playerRb)
+                {
+                    Vector2 pushDir = (collision.transform.position - transform.position).normalized;
+                    playerRb.AddForce(pushDir * 5f, ForceMode2D.Impulse);
+                }
+            }
+        }
+    }
+
     void TryFindPlayer()
     {
-        if (player) return;
+        searchTimer -= Time.fixedDeltaTime;
+        if (searchTimer > 0 && player != null) return;
+        searchTimer = 0.5f;
 
-        GameObject go = GameObject.FindGameObjectWithTag("Player");
-        if (go)
-            player = go.transform;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        float closestDist = Mathf.Infinity;
+        Transform bestTarget = null;
+
+        foreach (GameObject p in players)
+        {
+            PlayerHealth health = p.GetComponent<PlayerHealth>();
+            if (health != null && health.isDowned) continue;
+
+            float d = Vector2.Distance(transform.position, p.transform.position);
+            if (d < chaseDistance && d < closestDist)
+            {
+                closestDist = d;
+                bestTarget = p.transform;
+            }
+        }
+        player = bestTarget;
     }
 
     void ChasePlayer()
@@ -78,9 +155,10 @@ public class SkeletonAI : MonoBehaviour
         else
         {
             waitTimer -= Time.fixedDeltaTime;
+            rb.linearVelocity = Vector2.zero;
+            anim.SetBool("isMoving", false);
 
-            if (waitTimer <= 0)
-                PickRandomDirection();
+            if (waitTimer <= 0) PickRandomDirection();
         }
     }
 
@@ -93,9 +171,7 @@ public class SkeletonAI : MonoBehaviour
 
     void UpdateVisuals(Vector2 direction)
     {
-        if (direction.x > 0)
-            sr.flipX = false;
-        else if (direction.x < 0)
-            sr.flipX = true;
+        if (direction.x > 0) sr.flipX = false;
+        else if (direction.x < 0) sr.flipX = true;
     }
 }

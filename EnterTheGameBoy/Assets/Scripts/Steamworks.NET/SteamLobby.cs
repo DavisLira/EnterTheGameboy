@@ -46,28 +46,19 @@ public class SteamLobby : MonoBehaviour
 
     private void OnLobbyCreated(LobbyCreated_t callback)
     {
-        if (callback.m_eResult != EResult.k_EResultOK)
-        {
-            Debug.LogError("Erro ao criar Lobby na Steam!");
-            return;
-        }
+        if (callback.m_eResult != EResult.k_EResultOK) return;
 
-        // --- PROTEÇÃO ---
-        if (NetworkManager.singleton == null)
-        {
-            Debug.LogError("FATAL: Tentamos criar a sala, mas o NetworkManager sumiu!");
-            return;
-        }
-
-        Debug.Log("Lobby criado na Steam! Iniciando Host...");
-        
         NetworkManager.singleton.StartHost();
 
-        SteamMatchmaking.SetLobbyData(
-            new CSteamID(callback.m_ulSteamIDLobby), 
-            HostAddressKey, 
-            SteamUser.GetSteamID().ToString()
-        );
+        // Dados básicos
+        SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
+        
+        // --- NOVO: Salva o ID do Save na sala ---
+        if (GameSession.CurrentSave != null)
+        {
+            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "SaveID", GameSession.CurrentSave._id);
+            Debug.Log($"Lobby Criado para o Save: {GameSession.CurrentSave.name}");
+        }
         
         CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
     }

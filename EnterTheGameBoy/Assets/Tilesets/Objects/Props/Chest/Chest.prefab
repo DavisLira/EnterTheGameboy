@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7558935723556434881}
   - component: {fileID: 3066565531932356728}
   - component: {fileID: 5056567937868293056}
+  - component: {fileID: 7031638238066154533}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -47,10 +48,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38117504e9ff56543be92b5a9f6399c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  closedSprite: {fileID: 7016915154790794657, guid: 364123a1f285e436ba23433cb7495618, type: 3}
-  openingSprite: {fileID: 2973010562125365231, guid: 364123a1f285e436ba23433cb7495618, type: 3}
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   openSprite: {fileID: 7732169084934683777, guid: 364123a1f285e436ba23433cb7495618, type: 3}
-  itemPrefab: {fileID: 5010003896938829916, guid: 2befb5fa8ad264710b1a68c78e599097, type: 3}
+  closedSprite: {fileID: 7016915154790794657, guid: 364123a1f285e436ba23433cb7495618, type: 3}
+  possibleWeapons:
+  - {fileID: 6201271737050966448, guid: 31836a3688edb44b4ab7613de47df6b2, type: 3}
+  - {fileID: 8685871360264407476, guid: fa7b04fc7a92343d99c202c89f902e30, type: 3}
+  - {fileID: 8389916402351620435, guid: 1331b99cc039441dc8e543d90ef688f6, type: 3}
+  - {fileID: 7155440306035511618, guid: db07f04368fa74e87a5a5ca7467a3371, type: 3}
+  - {fileID: 7155440306035511618, guid: 698b404792159734d9581b45f31d7299, type: 3}
+  - {fileID: 7155440306035511618, guid: e0033c0e4f45a044ba62d17e270cc12e, type: 3}
+  - {fileID: 7155440306035511618, guid: 0a61118ac054aa840a99d2895d1307b1, type: 3}
+  - {fileID: 7155440306035511618, guid: 731225454f4027a43b99ad645d8713a1, type: 3}
+  - {fileID: 7155440306035511618, guid: 5dc57a513fd8e504bbd90a2c3fd1f4bf, type: 3}
+  isOpen: 0
 --- !u!50 &7558935723556434881
 Rigidbody2D:
   serializedVersion: 5
@@ -182,3 +195,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7031638238066154533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8397133947631308169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 264538042
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

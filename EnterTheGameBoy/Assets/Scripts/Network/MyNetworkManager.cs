@@ -38,23 +38,60 @@ public class MyNetworkManager : NetworkRoomManager
 
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
-        string currentScene = SceneManager.GetActiveScene().path;
-        
-        if (currentScene == RoomScene)
+        // 1. Host sempre entra (ID 0)
+        if (conn.connectionId == 0)
         {
-            OnRoomServerConnect(conn); 
-            return; 
+            base.OnServerConnect(conn);
+            return;
         }
 
-        if (currentScene != RoomScene)
+        // 2. Verifica se temos um save carregado
+        if (GameSession.CurrentSave == null)
         {
-            if (conn.connectionId == 0)
-            {
-                OnRoomServerConnect(conn);
-                return; 
-            }
+            // Se não tem save (ex: teste no editor), deixa entrar ou chuta?
+            // Vamos deixar entrar para debug.
+            base.OnServerConnect(conn);
+            return;
         }
-        base.OnServerConnect(conn);
+
+        // 3. Pega o SteamID de quem está entrando
+        // FizzySteamworks coloca o SteamID no campo address
+        string incomingSteamID = conn.address; 
+        Debug.Log($"[Auth] Jogador tentando entrar: {incomingSteamID}");
+
+        // 4. Verifica Whitelist
+        bool isAllowed = false;
+        
+        // A. Está na lista?
+        foreach (string allowed in GameSession.CurrentSave.allowedSteamIds)
+        {
+            if (allowed == incomingSteamID) isAllowed = true;
+        }
+
+        // B. Regra do "Mundo Novo / Aberto"
+        // Se só tem o Host na lista, significa que é um jogo novo ou aberto a amigos
+        // (Você pode criar uma flag no banco "isPrivate" se quiser mudar isso depois)
+        if (GameSession.CurrentSave.allowedSteamIds.Length <= 1)
+        {
+            isAllowed = true;
+            // IMPORTANTE: Adiciona ele na API para que ele tenha permissão futura
+            // Precisamos rodar numa Coroutine, mas NetworkManager não é bom pra isso se a cena mudar.
+            // O ideal é o APIService fazer isso.
+            APIService.instance.StartCoroutine(
+                APIService.instance.AddPlayerToSave(GameSession.CurrentSave._id, incomingSteamID, null, null)
+            );
+        }
+
+        if (isAllowed)
+        {
+            Debug.Log("[Auth] Acesso PERMITIDO.");
+            base.OnServerConnect(conn);
+        }
+        else
+        {
+            Debug.LogWarning("[Auth] Acesso NEGADO. Jogador não está na Whitelist.");
+            conn.Disconnect();
+        }
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)

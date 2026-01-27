@@ -354,6 +354,7 @@ GameObject:
   - component: {fileID: 1508155332}
   - component: {fileID: 1508155331}
   - component: {fileID: 1508155333}
+  - component: {fileID: 1508155334}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -390,7 +391,25 @@ MonoBehaviour:
   playerPrefab: {fileID: 364100782431303807, guid: ce4da82e469c44e1989a1fefb40f3316, type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 8397133947631308169, guid: 0c895b354bd2a4754bf1c1bc1666f91b, type: 3}
+  - {fileID: 3868048704129628241, guid: 5854e3ebc211d4df084a099464714132, type: 3}
+  - {fileID: 6201271737050966448, guid: 31836a3688edb44b4ab7613de47df6b2, type: 3}
+  - {fileID: 8685871360264407476, guid: fa7b04fc7a92343d99c202c89f902e30, type: 3}
+  - {fileID: 8389916402351620435, guid: 1331b99cc039441dc8e543d90ef688f6, type: 3}
+  - {fileID: 7155440306035511618, guid: db07f04368fa74e87a5a5ca7467a3371, type: 3}
+  - {fileID: 7155440306035511618, guid: 698b404792159734d9581b45f31d7299, type: 3}
+  - {fileID: 7155440306035511618, guid: e0033c0e4f45a044ba62d17e270cc12e, type: 3}
+  - {fileID: 7155440306035511618, guid: 0a61118ac054aa840a99d2895d1307b1, type: 3}
+  - {fileID: 7155440306035511618, guid: 731225454f4027a43b99ad645d8713a1, type: 3}
+  - {fileID: 7155440306035511618, guid: 5dc57a513fd8e504bbd90a2c3fd1f4bf, type: 3}
+  - {fileID: 2421372496125565841, guid: c93e06d988893fe4cb42e0e4d2a78fb1, type: 3}
+  - {fileID: 1741255862991114562, guid: 3617d5196ba0e3940bacf613dfdefc1a, type: 3}
+  - {fileID: 599013361078505092, guid: 0340e530c8ff949429de6e103afec348, type: 3}
+  - {fileID: 3868048704129628241, guid: a187fe747727f29408ec2b299d1508f6, type: 3}
+  - {fileID: 3868048704129628241, guid: cef884088d426c2428ea2568d5be6c97, type: 3}
+  - {fileID: 3868048704129628241, guid: 0e2d39a343c88ed4890678520d58045a, type: 3}
+  - {fileID: 3868048704129628241, guid: 5854e3ebc211d4df084a099464714132, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -445,6 +464,18 @@ MonoBehaviour:
   Timeout: 25
   AllowSteamRelay: 1
   UseNextGenSteamNetworking: 1
+--- !u!114 &1508155334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508155329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eef24c5006c94145b99c83df2192e1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::APIService
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

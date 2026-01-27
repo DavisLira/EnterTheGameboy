@@ -331,7 +331,14 @@ MonoBehaviour:
   playerPrefab: {fileID: 364100782431303807, guid: ce4da82e469c44e1989a1fefb40f3316, type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 8397133947631308169, guid: 0c895b354bd2a4754bf1c1bc1666f91b, type: 3}
+  - {fileID: 3868048704129628241, guid: 5854e3ebc211d4df084a099464714132, type: 3}
+  - {fileID: 6201271737050966448, guid: 31836a3688edb44b4ab7613de47df6b2, type: 3}
+  - {fileID: 8685871360264407476, guid: fa7b04fc7a92343d99c202c89f902e30, type: 3}
+  - {fileID: 8389916402351620435, guid: 1331b99cc039441dc8e543d90ef688f6, type: 3}
+  - {fileID: 7155440306035511618, guid: db07f04368fa74e87a5a5ca7467a3371, type: 3}
+  - {fileID: 2421372496125565841, guid: c93e06d988893fe4cb42e0e4d2a78fb1, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -351,7 +358,7 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 8232560408060679752, guid: 0667019c3d8144134ab20ee173140655, type: 3}
   RoomScene: Assets/Scenes/CharacterSelect.unity
-  GameplayScene: Assets/Scenes/Test.unity
+  GameplayScene: Assets/Scenes/Game.unity
   _allPlayersReady: 0
   clientIndex: 0
   characterDatabase: {fileID: 11400000, guid: 31afb378b1c96405285aea5ec4ef1ab7, type: 2}
