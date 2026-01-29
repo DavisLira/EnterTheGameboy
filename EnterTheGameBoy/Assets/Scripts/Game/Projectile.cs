@@ -48,7 +48,7 @@ public class Projectile : NetworkBehaviour
 
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage,owner);
             DestroySelf();
             return;
         }

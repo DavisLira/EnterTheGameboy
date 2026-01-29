@@ -38,6 +38,14 @@ public class PlayerWeaponController : NetworkBehaviour
     private float nextFireTime = 0f;
     private Camera mainCam;
 
+    [Server]
+    public void ForceWeaponInit(int weaponID)
+    {
+        currentWeaponID = weaponID;
+        // Se precisar chamar alguma lógica de equipar aqui, chame.
+        // Mas geralmente o Hook OnWeaponChanged cuida disso quando o objeto aparecer no cliente.
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();

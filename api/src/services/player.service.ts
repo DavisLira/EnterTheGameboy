@@ -3,9 +3,11 @@ import { redis } from "../redis/redis.client"; // Importa sua conexão existente
 import { Player } from "../interfaces/player/player.interface";
 
 export class PlayerService {
-  
   // Função principal que a Unity vai chamar
-  async findOrCreateBySteamId(steamId: string, username?: string): Promise<Player> {
+  async findOrCreateBySteamId(
+    steamId: string,
+    username?: string,
+  ): Promise<Player> {
     const cacheKey = `player:${steamId}`;
 
     // 1. Tenta pegar do Redis (Cache)
@@ -24,7 +26,7 @@ export class PlayerService {
       console.log("Player não existe. Criando novo...");
       player = await PlayerModel.create({
         steamId,
-        username: username || `Player_${steamId.slice(-4)}` // Nome padrão se não vier
+        username: username || `Player_${steamId.slice(-4)}`, // Nome padrão se não vier
       });
     }
 
@@ -38,5 +40,15 @@ export class PlayerService {
   // Apenas busca (útil para outras coisas)
   async getPlayerById(id: string): Promise<Player | null> {
     return PlayerModel.findById(id);
+  }
+
+  async updateKills(steamId: string, kills: number) {
+    // Opção A: Substituir o valor (Se o Unity manda o TOTAL de kills da vida toda)
+    // Use essa opção se você carregar as kills no login e somar no Unity.
+    return PlayerModel.findOneAndUpdate(
+      { steamId },
+      { $set: { kills: kills } },
+      { new: true }, // Retorna o objeto atualizado
+    );
   }
 }

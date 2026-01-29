@@ -42,4 +42,13 @@ export class SaveService {
     // A segurança é importante: Só deleta se o ID bater E o dono for quem está pedindo
     return await SaveModel.deleteOne({ _id: saveId, hostSteamId });
   }
+
+  // Substitui a whitelist inteira pelos IDs fornecidos
+  async updateSaveWhitelist(saveId: string, hostSteamId: string, playerIds: string[]) {
+    return await SaveModel.findOneAndUpdate(
+      { _id: saveId, hostSteamId }, // Segurança: só o dono pode atualizar
+      { allowedSteamIds: playerIds },
+      { new: true }
+    );
+  }
 }

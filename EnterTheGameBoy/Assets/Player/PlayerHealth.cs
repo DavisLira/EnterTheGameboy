@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class PlayerHealth : NetworkBehaviour
 {
@@ -17,6 +18,10 @@ public class PlayerHealth : NetworkBehaviour
     public Color normalColor = Color.white;
     public Color deadColor = Color.red;      // Cor quando morre
     public Color revivingColor = Color.green; // Cor alvo enquanto revive
+
+    [Header("Feedback de Dano")]
+    public Color damageColor = Color.red; // Cor da piscada
+    private Coroutine flashCoroutine;     // Para controlar a piscada e não bugar se tomar muito tiro rapido
 
     // Sincroniza o progresso (0.0 a 1.0) para todos verem a cor mudando
     [SyncVar(hook = nameof(OnProgressChanged))]
@@ -198,5 +203,32 @@ public class PlayerHealth : NetworkBehaviour
         return GetComponentInChildren<Animator>();
     }
 
-    void OnHealthChanged(int oldVal, int newVal) { }
+    void OnHealthChanged(int oldVal, int newVal) 
+    {
+        // Só pisca se:
+        // 1. A vida diminuiu (Dano)
+        // 2. Não estou caído (se estiver caído, a cor já é vermelha fixa)
+        if (newVal < oldVal && !isDowned)
+        {
+            if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+            flashCoroutine = StartCoroutine(FlashDamageEffect());
+        }
+    }
+
+    IEnumerator FlashDamageEffect()
+    {
+        SpriteRenderer[] sprites = GetModelSprites();
+
+        // 1. Pinta de vermelho
+        foreach(var sprite in sprites) sprite.color = damageColor;
+
+        // 2. Espera 0.2s
+        yield return new WaitForSeconds(0.2f);
+
+        // 3. Volta para a cor normal (SE não tiver morrido nesse meio tempo)
+        if (!isDowned)
+        {
+            foreach(var sprite in sprites) sprite.color = normalColor;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using Steamworks;
+using Mirror;
 
 public class SaveManager : MonoBehaviour
 {
@@ -61,15 +62,28 @@ public class SaveManager : MonoBehaviour
                 }, 
                 OnError));
         }
+        StartGameWithSave(data);
     }
 
     void StartGameWithSave(GameSaveData save)
     {
-        // 1. Guarda na memória estática
         GameSession.CurrentSave = save;
 
-        // 2. Chama o SteamLobby para criar a sala
-        SteamLobby.Instance.HostLobby();
+        // --- CORREÇÃO: DESCOMENTE ISSO ---
+        if (NetworkServer.active || NetworkClient.active)
+        {
+            NetworkManager.singleton.StopHost();
+        }
+        // ---------------------------------
+
+        if (SteamLobby.Instance != null)
+        {
+            SteamLobby.Instance.HostLobby();
+        }
+        else
+        {
+            NetworkManager.singleton.StartHost();
+        }
     }
 
     public void OnDeleteRequested(GameSaveData data)

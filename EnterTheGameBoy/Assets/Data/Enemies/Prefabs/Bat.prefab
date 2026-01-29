@@ -208,6 +208,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f879ad0b4493a9047b62c4aaff45c975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BatAI
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  isAsleep: 1
+  damage: 1
+  timeBetweenAttacks: 1
   chaseDistance: 5
   attackDistance: 3
   wanderSpeed: 0.6
@@ -233,6 +239,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 3
+  spriteRenderer: {fileID: 6226296758504960910}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &-1498221098104238445
 MonoBehaviour:
   m_ObjectHideFlags: 0

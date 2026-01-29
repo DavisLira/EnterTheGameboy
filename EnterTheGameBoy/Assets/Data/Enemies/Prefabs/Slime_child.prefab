@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 7958349156575301275}
   - component: {fileID: 8518153257620904881}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: Slime_child
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  isAsleep: 1
+  isAsleep: 0
   chaseDistance: 5
   jumpDistance: 1.2
   jumpDuration: 0.2
@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 2746575689
+  _assetId: 248530149
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

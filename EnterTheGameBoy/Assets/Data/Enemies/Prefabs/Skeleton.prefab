@@ -235,6 +235,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 3
+  spriteRenderer: {fileID: 7612053927770554880}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &6524013050952020495
 MonoBehaviour:
   m_ObjectHideFlags: 0

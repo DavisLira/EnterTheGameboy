@@ -47,4 +47,20 @@ export class SaveController {
       return res.status(500).json({ error: String(error) });
     }
   }
+
+  // PUT /saves/update-whitelist
+  async updateWhitelist(req: Request, res: Response) {
+    try {
+      const { saveId, steamId, playerIds } = req.body;
+      
+      // playerIds deve ser um Array de strings
+      const updated = await this.saveService.updateSaveWhitelist(saveId, steamId, playerIds);
+      
+      if (!updated) return res.status(404).json({ message: "Save not found or unauthorized" });
+      
+      return res.status(200).json(updated);
+    } catch (error) {
+      return res.status(500).json({ error: String(error) });
+    }
+  }
 }

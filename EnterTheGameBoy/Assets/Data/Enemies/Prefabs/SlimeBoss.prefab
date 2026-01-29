@@ -47,8 +47,8 @@ GameObject:
   - component: {fileID: 5773293055706760003}
   - component: {fileID: 748671867035705484}
   - component: {fileID: -2298850511613392475}
-  - component: {fileID: 4110505088996983786}
   - component: {fileID: 7767440624917783673}
+  - component: {fileID: 1081824437073755330}
   m_Layer: 0
   m_Name: SlimeBoss
   m_TagString: Enemy
@@ -244,6 +244,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 100
+  spriteRenderer: {fileID: 7031826783702316546}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &-2298850511613392475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,27 +277,10 @@ MonoBehaviour:
   radialCooldown: 12
   projectilePrefab: {fileID: 3066099113213999645, guid: 390a10c9de1473c489fb10d18f175c28, type: 3}
   firePoint: {fileID: 3109877716461587616}
-  slimePrefab: {fileID: 2421372496125565841, guid: c93e06d988893fe4cb42e0e4d2a78fb1, type: 3}
+  slimePrefab: {fileID: 2421372496125565841, guid: 04dfae54bd02e40fd8b686ff6be18611, type: 3}
   slimeCount: 3
   spawnInterval: 15
   spawnRadius: 2.5
---- !u!114 &4110505088996983786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7371440085792014115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 0
-  _assetId: 1888894780
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
 --- !u!114 &7767440624917783673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,3 +315,20 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &1081824437073755330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371440085792014115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 1888894780
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

@@ -28,4 +28,10 @@ public class MenuController : MonoBehaviour
         isOpen = false;
         menuCanvas.SetActive(false);
     }
+
+    public void QuitGame()
+    {   
+        Debug.Log("Quitting game...");
+        Application.Quit();
+    }
 }

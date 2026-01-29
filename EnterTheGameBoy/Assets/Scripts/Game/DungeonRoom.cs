@@ -8,6 +8,11 @@ public class DungeonRoom : NetworkBehaviour
     public List<GameObject> doors;
     public List<GameObject> enemies;
     
+    [Header("Configuração de Boss")]
+    public bool isBossRoom = false;          // Marque true no Inspector para a sala do Boss
+    public GameObject portalPrefab;          // Arraste o prefab do Portal aqui
+    public Transform roomCenter;             // Um objeto vazio no centro da sala para spawnar o portal
+
     [Header("Teleporte")]
     public Transform[] spawnPoints; 
 
@@ -18,7 +23,6 @@ public class DungeonRoom : NetworkBehaviour
     public override void OnStartServer()
     {
         UpdateDoorVisuals(false);
-        // Limpa a lista inicial de sujeira (objetos deletados)
         enemies.RemoveAll(item => item == null);
     }
 
@@ -37,12 +41,12 @@ public class DungeonRoom : NetworkBehaviour
     [Server]
     void StartRoom()
     {
-        Debug.Log("SALA ATIVADA!");
         roomActive = true;
         SetDoors(true);
         WakeUpEnemies();
     }
 
+    // ... (Métodos SetDoors, RpcSetDoors, UpdateDoorVisuals IGUAIS AO SEU CÓDIGO) ...
     [Server]
     void SetDoors(bool closed)
     {
@@ -72,28 +76,23 @@ public class DungeonRoom : NetworkBehaviour
     [Server]
     void WakeUpEnemies()
     {
-        enemiesAlive = 0; // Reseta contagem
+        enemiesAlive = 0; 
 
         foreach (var enemy in enemies)
         {
             if (enemy == null) continue;
-            
-            // 1. Ativa o objeto do inimigo
             enemy.SetActive(true);
             
-            // 2. Tenta acordar a IA (Verifica qual tipo de inimigo é)
-            // -------------------------------------------------------
+            // Acorda as IAs (Seu código original)
             SlimeAI slime = enemy.GetComponentInChildren<SlimeAI>();
             if (slime != null) slime.WakeUp();
-
+            BossSlimeAI slimeBoss = enemy.GetComponentInChildren<BossSlimeAI>();
+            if (slimeBoss != null) slimeBoss.WakeUp();
             BatAI bat = enemy.GetComponentInChildren<BatAI>();
             if (bat != null) bat.WakeUp();
-
             SkeletonAI skeleton = enemy.GetComponentInChildren<SkeletonAI>();
             if (skeleton != null) skeleton.WakeUp();
-            // -------------------------------------------------------
 
-            // 3. Configura a vida para saber quando a sala abre
             EnemyHealth health = enemy.GetComponent<EnemyHealth>();
             if (health == null) health = enemy.GetComponentInParent<EnemyHealth>();
 
@@ -101,15 +100,9 @@ public class DungeonRoom : NetworkBehaviour
             {
                 enemiesAlive++; 
                 health.OnDeath += HandleEnemyDeath;
-                Debug.Log($"[Dungeon] Monitorando inimigo: {enemy.name}");
-            }
-            else
-            {
-                Debug.LogError($"[Dungeon] O inimigo {enemy.name} NÃO tem script EnemyHealth! A sala pode travar.");
             }
         }
         
-        // Se a lista estava vazia ou ninguém tinha vida, abre a sala
         if (enemiesAlive == 0) RoomCleared();
     }
 
@@ -117,11 +110,8 @@ public class DungeonRoom : NetworkBehaviour
     void HandleEnemyDeath(GameObject deadEnemy)
     {
         enemiesAlive--;
-        // Retira a inscrição do evento para evitar erros futuros
         EnemyHealth health = deadEnemy.GetComponent<EnemyHealth>();
         if (health != null) health.OnDeath -= HandleEnemyDeath;
-
-        Debug.Log($"[Dungeon] Inimigo abatido! Restam: {enemiesAlive}");
 
         if (enemiesAlive <= 0)
         {
@@ -134,17 +124,32 @@ public class DungeonRoom : NetworkBehaviour
     {
         if (roomCleared) return;
         
-        Debug.Log("Sala Limpa! Abrindo portas...");
         roomCleared = true;
         SetDoors(false); 
+
+        // --- NOVO: LÓGICA DO DROP DO PORTAL ---
+        if (isBossRoom)
+        {
+            SpawnBossReward();
+        }
     }
 
-    [ServerCallback]
-    void Update()
+    [Server]
+    void SpawnBossReward()
     {
-        // Update vazio (Lógica controlada por eventos)
+        if (portalPrefab != null && roomCenter != null)
+        {
+            Debug.Log("Boss Morto! Spawnando portal...");
+            GameObject portal = Instantiate(portalPrefab, roomCenter.position, Quaternion.identity);
+            NetworkServer.Spawn(portal);
+        }
+        else
+        {
+            Debug.LogWarning("DungeonRoom: É sala de Boss, mas falta o PortalPrefab ou RoomCenter!");
+        }
     }
 
+    // ... (TeleportParty e Update continuam iguais) ...
     [Server]
     void TeleportParty(GameObject activatorPlayer)
     {

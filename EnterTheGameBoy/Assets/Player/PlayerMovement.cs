@@ -23,6 +23,8 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!NetworkClient.ready || !isLocalPlayer) return;
+        
         if (!isLocalPlayer) return;
 
         moveInput = context.ReadValue<Vector2>();
@@ -58,6 +60,8 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!NetworkClient.ready) return;
+
         if (!isLocalPlayer) return;
 
         rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);

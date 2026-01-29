@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 public class APIService : MonoBehaviour
 {
@@ -192,6 +193,72 @@ public class APIService : MonoBehaviour
             {
                 onError?.Invoke(request.error);
             }
+        }
+    }
+
+    public IEnumerator UpdateSaveWhitelist(string saveId, string hostSteamId, List<string> playerIds, Action onSuccess, Action<string> onError)
+    {
+        string url = baseURL + "/saves/update-whitelist";
+        
+        // Criar um objeto simples para serializar a lista de strings
+        var payload = new 
+        { 
+            saveId = saveId, 
+            steamId = hostSteamId, 
+            playerIds = playerIds 
+        };
+
+        // Dica: JsonUtility da Unity sofre com listas de strings simples dentro de object anonimo. 
+        // Se der erro de JSON, teremos que fazer string manual, mas tente assim primeiro:
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(payload); 
+        // ^ RECOMENDO USAR NEWTONSOFT.JSON (Pacote JSON .NET for Unity) para listas complexas.
+        // Se não tiver, me avise que faço a versão manual string builder.
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "PUT"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                onSuccess?.Invoke();
+            }
+            else
+            {
+                onError?.Invoke(request.error);
+            }
+        }
+    }
+
+    public IEnumerator UpdatePlayerKills(string steamId, int totalKills, Action onSuccess, Action<string> onError)
+    {
+        // Certifique-se que essa rota existe na sua API Node.js
+        string url = baseURL + "/players/update-kills"; 
+
+        // MUDANÇA: Usando a classe nova em vez de escrever string manual
+        UpdateKillsRequest payload = new UpdateKillsRequest 
+        { 
+            steamId = steamId, 
+            kills = totalKills 
+        };
+    
+        string json = JsonUtility.ToJson(payload);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success) onSuccess?.Invoke();
+            else onError?.Invoke(request.error);
         }
     }
 }

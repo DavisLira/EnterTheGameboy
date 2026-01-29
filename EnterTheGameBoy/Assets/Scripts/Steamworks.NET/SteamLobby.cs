@@ -4,7 +4,6 @@ using Steamworks;
 
 public class SteamLobby : MonoBehaviour
 {
-    // Singleton simples para garantir que só exista um
     public static SteamLobby Instance;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
@@ -14,9 +13,11 @@ public class SteamLobby : MonoBehaviour
     public static CSteamID CurrentLobbyID;
     private const string HostAddressKey = "HostAddress";
 
+    // Adicione referência ao manager para facilitar
+    private NetworkManager manager;
+
     void Awake()
     {
-        // Garante que este objeto não seja destruído ao carregar o Menu
         if (Instance == null)
         {
             Instance = this;
@@ -31,6 +32,7 @@ public class SteamLobby : MonoBehaviour
 
     void Start()
     {
+        manager = NetworkManager.singleton; // Pega referência
         if (!SteamManager.Initialized) return;
 
         lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
@@ -40,7 +42,12 @@ public class SteamLobby : MonoBehaviour
 
     public void HostLobby()
     {
-        // Cria sala pública para 4 pessoas
+        // Proteção Extra: Se já estiver rodando, para tudo antes de criar novo
+        if (NetworkServer.active || NetworkClient.active)
+        {
+             manager.StopHost();
+        }
+
         SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, 4);
     }
 
@@ -48,21 +55,25 @@ public class SteamLobby : MonoBehaviour
     {
         if (callback.m_eResult != EResult.k_EResultOK) return;
 
-        NetworkManager.singleton.StartHost();
+        // Proteção Crítica: Se o Mirror não desligou a tempo, força agora
+        if (NetworkServer.active || NetworkClient.active)
+        {
+            manager.StopHost();
+        }
 
-        // Dados básicos
+        manager.StartHost();
+
         SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
         
-        // --- NOVO: Salva o ID do Save na sala ---
         if (GameSession.CurrentSave != null)
         {
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "SaveID", GameSession.CurrentSave._id);
-            Debug.Log($"Lobby Criado para o Save: {GameSession.CurrentSave.name}");
         }
         
         CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
     }
 
+    // ... (Mantenha OnGameLobbyJoinRequested e OnLobbyEntered como estavam) ...
     private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
     {
         SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
@@ -73,13 +84,9 @@ public class SteamLobby : MonoBehaviour
         if (NetworkServer.active) return;
 
         CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
-
-        string hostAddress = SteamMatchmaking.GetLobbyData(
-            new CSteamID(callback.m_ulSteamIDLobby), 
-            HostAddressKey
-        );
-
-        NetworkManager.singleton.networkAddress = hostAddress;
-        NetworkManager.singleton.StartClient();
+        string hostAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
+        
+        manager.networkAddress = hostAddress;
+        manager.StartClient();
     }
 }
